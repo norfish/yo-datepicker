@@ -60,7 +60,7 @@ a{text-decoration: none;}
     font-family: tahoma, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
-.yo-date .arrow{
+/*.yo-date .arrow{
     content: ' ';
     height: 0;
     position: absolute;
@@ -72,6 +72,7 @@ a{text-decoration: none;}
 .dir-default .arrow{
     border-bottom-color: #72C8FA;
     top: -14px;
+    _top: -28px;
     left: 10px;
 }
 
@@ -79,7 +80,31 @@ a{text-decoration: none;}
     border-right-color: #72C8FA;
     top: 10px;
     left: -14px;
+}*/
+
+.yo-date .arrow{
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    top: -10px;
+    left: 10px;
+    font-size: 23px;
+    line-height: 16px;
+    color: #72C8FA;
 }
+
+.arrow .arrow-inner{
+    color: #72C8FA;
+}
+
+.arrow .arrow-outer{
+    color: #72C8FA;
+    margin-top: -16px;
+}
+
+.dir-defaul .arrow{}
+
+.dir-right .arrow{ top: 5px; left: -5px;}
 
 .yo-date .date-hd .switch,
 .yo-date .date-hd .date-guide,
@@ -163,17 +188,23 @@ a{text-decoration: none;}
 
 .yo-date .ym-inner {
     position: relative;
+    width: 80px;
+    height: 2px;
 }
 
 .yo-date .ym-measure{float: left; padding-left: 3px; font-size: 14px; line-height: 30px;}
 
 .yo-date .date-guide .ym .year-cont{
-    float: left;
+    position: absolute;
     width: 80px;
+    top: 0;
+    left: 0;
     text-align: left;
 }
 .yo-date .date-guide .ym .month-cont{
-    float: left;
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 80px;
     margin-left: 10px;
     text-align: left;
@@ -241,6 +272,11 @@ a{text-decoration: none;}
     color: #FFF;
 }
 
+.yo-date td.cur.gray {
+    background-color: transparent;
+    color: #CDCCCC;
+}
+
 .yo-date td.day.hover,
 .yo-date td.day:hover{
     background-color: #A0A0A0;
@@ -281,14 +317,3 @@ a{text-decoration: none;}
     color: #08D1C4;
     border-bottom: solid 1px #08D1C4;
 }
-
-
-
-/****test*****/
-.control{width: 300px; height: 20px;}
-.box{position: relative; width: 200px;}
-.inp{width: 170px; height: 20px; border: solid 1px blue;}
-
-.pop{position: absolute; top: 20px; left: 0; width: 170px;}
-.wrap{position: relative;}
-.inner{position: absolute;}

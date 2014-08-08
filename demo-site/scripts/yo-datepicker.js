@@ -25,6 +25,7 @@
  * setup-contact-date
  *
  * nav
+ * rangedate 联动
  *
  *
  * seprator - or /
@@ -36,8 +37,9 @@
 
     if(window.console === undefined){
         window.console = {};
-        console.log = function(){}
+        console.log = console.info = console.debug = console.error = function(){};
     }
+
     /**
      * [__extend description] extend class
      * @param  {[type]} child  [subClass]
@@ -107,14 +109,23 @@
         return ieTest;
     }
 
+    /**
+     * [isDate description]
+     * @param  {[type]}  date [description]
+     * @return {Boolean}      [description]
+     */
+    function isDate(date){
+        return date instanceof Date;
+    }
+
     var ONEDAY = 864e5,
         MONTH = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
         DAYS = {
             30: [3, 5, 8, 10],
             31: [0, 2, 4, 6, 7, 9, 11]
         },
-        WEEK = {0: ['日', '一', '二', '三', '四', '五', '六'],
-                1: ['一', '二', '三', '四', '五', '六', '日']
+        WEEK = {0: ['周日', '一', '二', '三', '四', '五', '六'],
+                1: ['周一', '二', '三', '四', '五', '六', '日']
             }
         HOLIDAYS = {};
 
@@ -146,8 +157,11 @@
                             '<div class="week-cont">{{weekCont}}</div>'+
                             '<div class="day-cont">{{dayCont}}</div>'+
                         '</div>'+
-                        '<div class="date-ft">'+
-                        '<div class="arrow"></div>'+
+                        '<div class="date-ft"><div class="date-map"><a href="javascript:void(0);" class="date-today">今天</a></div></div>'+
+                        '<div class="arrow">'+
+		                    '<div class="arrow-inner">&diams;</div>'+
+		                    '<div class="arrow-outer">&diams;</div>'+
+		                '</div>'+
                     '</div>';
 
     var Default = {
@@ -158,7 +172,7 @@
         startMonth: 1,
         minDate: -Infinity,
         maxDate: Infinity,
-        crossYear: 100,
+        crossYear: 10,
         crossMonth: 12,
         Holidays: window.HolidayData,
         passed: false,
@@ -169,9 +183,7 @@
         range: false, //if range datepicker or single datepicker
         calender: 1, //number of calenders
         animate: 'none', //animation
-        fromDate: -Infinity,
-        toDate: Infinity,
-        distance: '3D' //default todate after fromdate D,M,Y respect day,month,year
+        distance: '3D' //default todate after fromdate D,W,Y respect day,week
     };
 
     var mousedown = 0;
@@ -180,7 +192,8 @@
     var YoDate = function(inp, options){
         var ot = new Date().getTime();
         this.inp = inp;
-        this.options = $.extend(Default, options);
+        _uid = +new Date();
+        this.options = $.extend({}, Default, options);
         this.$holder = '';
         this.curInfo = {};
         this.chosenDate = UTCToday();
@@ -192,6 +205,7 @@
     YoDate.prototype = {
         init: function(){
             this.initHolder();
+            this.processOpts();
             this.render();
             this.onAfterRender();
         },
@@ -220,6 +234,13 @@
                     break;
                 }
 
+                case 't': {
+                    top = pos.top - 240;
+                    left = pos.left + pos.width + 10;
+                    direct = 'dir-top';
+                    break;
+                }
+
                 case 'b':
                 default: {
                     top = pos.top + pos.height + 10;
@@ -227,6 +248,7 @@
                     direct = 'dir-default'; //default
                     break;
                 }
+
             }
 
             $(document.body).append('<div class="yodate-popbox '+ direct +'" id="' + uid + '" style="display:none; z-index:99; top:'+ top +'px; left:'+ left +'px;"></div>');
@@ -235,6 +257,20 @@
             self.attachEvents();
         },
 
+        //process options before render
+        processOpts: function(){
+            var opts = this.options;
+
+            if(opts.range && opts.relateFrom){
+                opts.passed = true;
+
+                if(opts.relateFrom){
+                    var str = $(opts.relateFrom).val(),
+                    d = this.getDate(str);
+                    d ? opts.minDate = d : null;
+                }
+            }
+        },
 
         //给定一个日期，获取他所在月份的日历
         render: function(date){
@@ -243,10 +279,9 @@
             var $picker = $(this.picker);
             var info;
 
-            if(date === undefined){
+            if(!date){
                 date = UTCToday();
             }
-
             info = self.getDateInfo(date);
 
             var options = self.options;
@@ -331,26 +366,30 @@
         },
 
         update: function(date){
+
             var ot = new Date().getTime();
             date = this.validDate(date);
+            this.processOpts();
             this.render(date);
             this.onAfterRender();
-            $(this.inp).focus();
             console.log('update-cost', new Date().getTime() - ot + 'ms');
         },
 
+        //验证date 是否是合法的date
         validDate: function(date){
             var opts = this.options;
-            if(!date){
-                return UTCToday();
+            if(!date || !isDate(date)){
+
+                date = UTCToday();
             }
-            if( date - opts.minDate > 0 && opts.maxDate - date > 0){
-                return date;
-            } else if(date - opts.minDate < 0){
-                return opts.minDate;
-            } else {
-                return opts.maxDate;
+
+            if(date - opts.minDate < 0){
+                date = opts.minDate;
+            } else if(date - opts.maxDate > 0){
+                date = opts.maxDate;
             }
+
+            return date;
         },
 
         updateNav: function(info){
@@ -360,12 +399,14 @@
                 year = info.year,
                 month = info.month,
                 opts = this.options,
+                minD = opts.minDate,
+                maxD = opts.maxDate,
                 yearCont = ['<select name="" class="date-select" id="'+ self.getUID('year') +'">'],
                 monthCont = ['<select name="" class="date-select" id="'+ self.getUID('month') +'">'];
 
-            var startY = Math.max(opts.minDate.getFullYear(), year - opts.crossYear),
+            var startY = Math.max(isDate(minD) ? minD.getFullYear() : minD, year - opts.crossYear),
                 startM = 1,
-                endY = Math.min(opts.maxDate.getFullYear(), year + opts.crossYear),
+                endY = Math.min(isDate(maxD) ? maxD.getFullYear() : maxD, year + opts.crossYear),
                 endM = 12;
 
             for(var y = startY; y <= endY; y++){
@@ -482,6 +523,8 @@
                 opts = this.options,
                 prevDis = false,
                 nextDis = false,
+                minD = opts.minDate,
+                maxD = opts.maxDate,
                 prevYear,
                 prevMonth,
                 nextYear,
@@ -507,11 +550,11 @@
                 nextYear = y + 1;
             }
 
-            if(UTCDate(prevYear, prevMonth) - UTCDate(opts.minDate.getFullYear(), opts.minDate.getMonth() ) < 0 ){
+            if(UTCDate(prevYear, prevMonth) - ( isDate(minD) ? UTCDate(minD.getFullYear(), minD.getMonth()) : minD ) < 0 ){
                 prevDis = true;
             }
 
-            if(UTCDate(opts.maxDate.getFullYear(), opts.maxDate.getMonth() ) - UTCDate(nextYear, nextMonth) < 0 ){
+            if( ( isDate(maxD) ? UTCDate(maxD.getFullYear(), maxD.getMonth()) : maxD ) - UTCDate(nextYear, nextMonth) < 0 ){
                 nextDis = true;
             }
 
@@ -580,7 +623,7 @@
                 $inp = $(self.inp),
                 $holder = self.$holder;
 
-            $inp.on('focus.yod click.yod', function(){
+            $inp.on('click.yod', function(){
                 self.show();
             });
 
@@ -627,12 +670,19 @@
                 if(!$tar.hasClass('cur')){
                     $holder.find('.cur').removeClass('cur');
                     $tar.addClass('cur');
-                    $inp.val(str);
+                    //$inp.val(str);
+                    self.setDate(str);
                     self.hide();
                     self.trigger('chosen.yod');
                 }
                 return false;
             });
+
+            //
+            $holder.on('mousedown.yod', '.date-today', function(evt){
+                evt.preventDefault();
+                self.update( UTCToday() );
+            })
 
             isIE(7, 'lt') && $holder.on('mouseover.yod', 'td.day', function(evt){
                 $(this).addClass('hover');
@@ -643,14 +693,46 @@
             });
         },
 
+        //chosen date and set value of inp
+        setDate: function(str){
+        	var self = this,
+        		$inp = $(self.inp),
+        		opts = self.options,
+        		col = {'D': 1,
+        				'W': 7
+        			};
+
+        	str && $inp.val(str);
+
+        	if(opts.range){
+
+        		var dis = opts.distance.match(/^(\d+)(\w)$/);
+        		dis = ONEDAY * parseInt(dis[1]) * col[ dis[2] ];
+
+        		if(opts.relateTo && !$(opts.relateTo).val() ){
+        			var toDate = new Date( self.getDate(str).getTime() + dis );
+        			var toDateStr = self.formateDate(toDate);
+        			$(opts.relateTo).val(toDateStr);
+        		} else if(opts.relateFrom && !$(opts.relateFrom).val()){
+        			var fromDate = new Date( self.getDate(str).getTime() - dis );
+        			var fromDateStr = self.formateDate(fromDate);
+        			$(opts.relateFrom).val(fromDateStr);
+        		}
+        	}
+        },
+
         formatDateCell: function(str){
             return ((''+str).length === 1) ? '0' + str : str;
         },
 
         getCurrent: function(){
             var str = $.trim( $(this.inp).val() );
+            return this.getDate(str) || UTCToday();
+        },
 
-            if( this.isDateStr(str) ){
+        //get date from datestr like 2014-09-01
+        getDate: function(str){
+            if(this.isDateStr(str)){
                 str = str.split('-');
                 for(var i=0, l=str.length; i<l; i++){
                     str[i] = parseInt(str[i], 10);
@@ -659,11 +741,9 @@
                     }
                 }
                 return UTCDate.apply(Date, str);
-
             } else {
-                return UTCToday();
+                return false;
             }
-            //return this.isDateStr(inp) ? inp = UTCDate.apply(Date, inp.split('-')) : UTCToday();
         },
 
         isDateStr: function(str){
@@ -719,6 +799,7 @@
 
         onShow: function(){
             this.$holder.css('display', 'block');
+            //$(this.inp).focus();
         },
 
         onHide: function(){
@@ -727,12 +808,13 @@
 
         onBeforeShow: function(){
             var self = this,
-            curDate = self.getCurrent();
 
-            if(self.chosenDate - curDate !== 0){
+            	curDate = self.getCurrent();
+
+            //if(self.chosenDate - curDate !== 0){
                 self.chosenDate = curDate;
                 self.update(curDate);
-            }
+            //}
 
             if(typeof self.options.beforeShow === 'function'){
                 self.options.beforeShow();
@@ -765,15 +847,21 @@
 
     };
 
+    /**************************************************/
+    /**
+     * extend jquery
+     */
     $.fn.yoDate = function(options){
         var self = this;
         new YoDate($(self), options);
     };
 
-    $.fn.yoDateRange = function(options){
-        var self = this;
-        var options = $.extend(options, {range: true})
-        new YoDate($(self), options);
+    window.YoDateRange = function(from, to, options){
+        var self = this,
+            from_opts = $.extend(options, {range: true, relateTo: to}),
+            to_opts = $.extend(options, {range:true, relateFrom: from});
+        new YoDate(from, from_opts);
+        new YoDate(to, to_opts);
     };
 
 })(window, undefined, jQuery);
