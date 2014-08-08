@@ -1,0 +1,13 @@
+{
+  "name": "yodate",
+  "private": true,
+  "dependencies": {
+    "modernizr": "~2.6.2",
+    "jquery": "~1.11.0"
+  },
+  "devDependencies": {
+    "purecss": "~0.5.0",
+    "font-awesome": "~4.1.0",
+    "Selecter": "~3.1.4"
+  }
+}
