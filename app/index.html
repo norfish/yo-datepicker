@@ -1,129 +1,190 @@
 <!doctype html>
-<html class="no-js">
-    <head>
-        <meta charset="utf-8">
-        <title>yodate</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+<html lang="zh-cn">
 
-        <!-- build:css styles/vendor.css -->
-        <!-- bower:css -->
-        <!-- endbower -->
-        <!-- endbuild -->
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <!-- build:css styles/main.css -->
-        <link rel="stylesheet" href="styles/pure.css">
-        <!-- <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css"> -->
-        <link rel="stylesheet" href="styles/fancySelect.css">
-        <link rel="stylesheet" href="bower_components/Selecter/jquery.fs.selecter.css">
-        <link rel="stylesheet" href="styles/datepicker.css">
-        <!-- endbuild -->
+    <title>Yo &ndash; Datapicker</title>
 
-        <!-- build:js scripts/vendor/modernizr.js -->
-        <script src="bower_components/modernizr/modernizr.js"></script>
-        <!-- endbuild -->
-    </head>
-    <body>
-        <!--[if lt IE 10]>
-            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
 
-        <div class="hd">
-            <h1>Hello , Yo-Datepicker.</h1>
-        </div>
-        <div class="bd">
-            <div class="silde"></div>
-            <div class="container">
-                <div class="pure-g">
-                    <div class="pure-u-1-3" id="expbox">
-                        <!-- <select name="" id="exp">
-                            <option value="">1</option>
-                            <option value="">2</option>
-                            <option value="">3</option>
-                            <option value="">4</option>
-                            <option value="">5</option>
-                        </select>
-                        <select class="basic">
-                          <option value="">Select something…</option>
-                          <option>Lorem</option>
-                          <option>Ipsum</option>
-                          <option>Dolor</option>
-                          <option>Sit</option>
-                          <option>Amet</option>
-                        </select> -->
-                    </div>
-                    <div class="pure-u-2-3">
-                        <form class="pure-form pure-form-aligned">
-                            <fieldset>
-                                <div >
-                                    <div class="title">
-                                        <h3>Normal</h3>
-                                    </div>
-                                    <div class="yobox">
-                                        <input id="date" type="text" placeholder="yyyy-mm-dd" autocomplete="off">
-                                    </div>
-                                </div>
+    <link rel="stylesheet" href="styles/pure.css">
 
-                                <div >
-                                    <div class="title">
-                                        <h3>single options | passed: true minDate</h3>
-                                    </div>
-                                    <div class="yobox">
-                                        <input id="date1" type="text" placeholder="yyyy-mm-dd" autocomplete="off">
-                                    </div>
-                                </div>
 
-                                <div >
-                                    <div class="title">
-                                        <h3>single options | direction right crossYear 20</h3>
-                                    </div>
-                                    <div class="yobox">
-                                        <input id="date2" type="text" placeholder="yyyy-mm-dd" autocomplete="off">
-                                    </div>
-                                </div>
+    <!--[if lte IE 8]>
 
-                                <div >
-                                    <div class="title">
-                                        <h3>singe options | minDate maxDate</h3>
-                                    </div>
-                                    <div class="yobox">
-                                        <input id="date3" type="text" placeholder="yyyy-mm-dd" autocomplete="off">
-                                    </div>
-                                </div>
+    <link rel="stylesheet" href="styles/grids-responsive-old-ie.css">
 
-                                <div >
-                                    <div class="title">
-                                        <h3>DateRange</h3>
-                                    </div>
-                                    <div class="yobox">
-                                        <input id="range-from" type="text" name="fromDate" placeholder="from:yyyy-mm-dd" autocomplete="off">
-                                        <input id="range-to" type="text" name="toDate" placeholder="to:yyyy-mm-dd" autocomplete="off">
-                                    </div>
-                                </div>
+<![endif]-->
+    <!--[if gt IE 8]><!-->
 
-                            </fieldset>
-                        </form>
-                    </div>
-                </div>
+    <link rel="stylesheet" href="styles/grids-responsive.css">
 
+    <!--<![endif]-->
+
+
+    <!--[if lte IE 8]>
+        <link rel="stylesheet" href="styles/layouts/blog-old-ie.css">
+    <![endif]-->
+    <!--[if gt IE 8]><!-->
+    <link rel="stylesheet" href="styles/layouts/blog.css">
+    <!--<![endif]-->
+
+    <link rel="stylesheet" href="styles/fancySelect.css">
+    <link rel="stylesheet" href="styles/datepicker.css">
+
+
+</head>
+
+<body>
+
+
+    <div id="layout" class="pure-g">
+        <div class="sidebar pure-u-1 pure-u-md-1-4">
+            <div class="header">
+                <hgroup>
+                    <h1 class="brand-title">Yo-Datepicker</h1>
+                    <h2 class="brand-tagline">多功能日历框组件</h2>
+                </hgroup>
+
+                <nav class="nav">
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a class="pure-button" href="http://jspie.me/demo/yodate">Yo</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="pure-button" href="https://github.com/norfish/yo-datepicker">Github</a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </div>
 
+        <div class="content pure-u-1 pure-u-md-3-4">
+            <div>
+                <form class="pure-form pure-form-aligned"><fieldset>
+                <!-- A wrapper for all the blog posts -->
+                <div class="posts">
+                    <h1 class="content-subhead">Single Datepicker| 单日历框Example</h1>
 
-        <!-- build:js scripts/vendor.js -->
-        <!-- bower:js -->
-        <script src="bower_components/jquery/dist/jquery.js"></script>
-        <!-- endbower -->
-        <!-- endbuild -->
+                    <!-- A single blog post -->
+                    <section class="post">
+                        <header class="post-header">
+                            <img class="post-avatar" alt="Tilo Mitra&#x27;s avatar" height="48" width="48" src="img/calender.png">
 
-        <!-- build:js scripts/main.js -->
-        <script src="scripts/yodate.lang.js"></script>
-        <script src="scripts/yselector.js"></script>
-        <script src="scripts/fancySelect.js"></script>
-        <script src="bower_components/Selecter/jquery.fs.selecter.js"></script>
-        <script src="scripts/yo-datepicker.js"></script>
-        <script src="scripts/main.js"></script>
-        <!-- endbuild -->
+                            <h2 class="post-title">Normal</h2>
+                        </header>
+
+                        <div class="post-description">
+                            <p>
+                               <div class="yobox">
+                                    <input id="date" type="text" placeholder="yyyy-mm-dd" autocomplete="off">
+                                </div>
+                            </p>
+                        </div>
+                    </section>
+
+                    <section class="post">
+                        <header class="post-header">
+                            <img class="post-avatar" alt="Tilo Mitra&#x27;s avatar" height="48" width="48" src="img/calender.png">
+
+                            <h2 class="post-title">Options | passed: false minDate showRelate</h2>
+                        </header>
+
+                        <div class="post-description">
+
+                               <div class="yobox">
+                                    <input id="date1" type="text" placeholder="yyyy-mm-dd" autocomplete="off">
+                                </div>
+
+                        </div>
+                    </section>
+
+                    <section class="post">
+                        <header class="post-header">
+                            <img class="post-avatar" alt="Tilo Mitra&#x27;s avatar" height="48" width="48" src="img/calender.png">
+
+                            <h2 class="post-title">Options | direction right crossYear 20</h2>
+                        </header>
+
+                        <div class="post-description">
+                            <p>
+                               <div class="yobox">
+                                    <input id="date2" type="text" placeholder="yyyy-mm-dd" autocomplete="off">
+                                </div>
+                            </p>
+                        </div>
+                    </section>
+
+                    <section class="post">
+                        <header class="post-header">
+                            <img class="post-avatar" alt="Tilo Mitra&#x27;s avatar" height="48" width="48" src="img/calender.png">
+
+                            <h2 class="post-title">Options | passed:true minDate maxDate</h2>
+                        </header>
+
+                        <div class="post-description">
+                            <p>
+                               <div class="yobox">
+                                    <input id="date3" type="text" placeholder="yyyy-mm-dd" autocomplete="off">
+                                </div>
+                            </p>
+                        </div>
+                    </section>
+
+                </div>
+
+                <div class="posts">
+                    <h1 class="content-subhead">Range Datepicker | 时间范围日历框</h1>
+                    <section class="post">
+                        <header class="post-header">
+                            <img class="post-avatar" alt="Tilo Mitra&#x27;s avatar" height="48" width="48" src="img/calender.png">
+
+                            <h2 class="post-title">Simple Range</h2>
+                        </header>
+
+                        <div class="post-description">
+                            <p>
+                               <div class="yobox">
+                                    <input id="range-from" type="text" name="fromDate" placeholder="from:yyyy-mm-dd" autocomplete="off">
+                                    <input id="range-to" type="text" name="toDate" placeholder="to:yyyy-mm-dd" autocomplete="off">
+                                </div>
+                            </p>
+                        </div>
+                    </section>
+                </div>
+                </fieldset></form>
+
+                <div class="footer">
+                    <div class="pure-menu pure-menu-horizontal pure-menu-open">
+                        <ul>
+                            <li><a href="#">About</a>
+                            </li>
+                            <li><a href="#">Twitter</a>
+                            </li>
+                            <li><a href="#">GitHub</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- build:js scripts/vendor.js -->
+    <!-- bower:js -->
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <!-- endbower -->
+    <!-- endbuild -->
+
+    <!-- build:js scripts/main.js -->
+    <script src="scripts/yodate.lang.js"></script>
+    <script src="scripts/yselector.js"></script>
+    <script src="scripts/fancySelect.js"></script>
+    <script src="scripts/yo-datepicker.js"></script>
+    <script src="scripts/main.js"></script>
+    <!-- endbuild -->
+
 </body>
+
 </html>

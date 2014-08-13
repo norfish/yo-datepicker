@@ -68,7 +68,8 @@
         trigger.removeClass('open');
         return options.removeClass('open');
       });
-      trigger.on('mousedown.yod', function() {
+      trigger.on('mousedown.yod', function(evt) {
+        evt.preventDefault();
         var offParent, parent;
         if (!disabled) {
           trigger.toggleClass('open');
@@ -155,15 +156,17 @@
         }
       });
       options.on('mousedown.yod', 'li', function(e) {
+
+        e.preventDefault();
         var clicked;
         clicked = $(this);
         sel.val(clicked.data('raw-value'));
         if (!isiOS) {
-          sel.trigger('blur.fs').trigger('focus.fs');
+          //sel.trigger('blur.fs').trigger('focus.fs');
         }
         options.find('.selected').removeClass('selected');
         clicked.addClass('selected');
-        return sel.val(clicked.data('raw-value')).trigger('change.fs').trigger('blur.fs').trigger('focus.fs');
+        return sel.val(clicked.data('raw-value')).trigger('change.fs');
       });
       options.on('mouseenter.fs', 'li', function() {
         var hovered, nowHovered;

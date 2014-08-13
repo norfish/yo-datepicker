@@ -1,23 +1,22 @@
 (function($){
-    "use strict";
 
     $(function(){
 
+        $('.basic').fancySelect();
         var options = {
             passed: true,
             minDate: new Date(Date.UTC(2010, 7, 15) ),
             maxDate: new Date(Date.UTC(2016, 2, 9)),
             distance: '1W'
 
-        };
+        }
 
         //simple datepricker
         $('#date').yoDate();
 
         //passed true and minDate
         $('#date1').yoDate({
-            passed: false,
-            showRelate: true,
+            passed: true,
             minDate: new Date(Date.UTC(1980, 7, 15) )
         });
 

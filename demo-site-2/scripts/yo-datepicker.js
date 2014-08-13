@@ -33,8 +33,6 @@
 
 (function(window, undefined, $){
 
-    "use strict";
-
     //var utcDate =newDate(Date.UTC(2014,11,1,0,0,0));
 
     if(window.console === undefined){
@@ -44,23 +42,23 @@
 
     /**
      * [__extend description] extend class
-     * @param  {[object]} child  [subClass]
-     * @param  {[object]} parent [supClass that be extended]
-     * @return {[object]}        [extended subClass]
+     * @param  {[type]} child  [subClass]
+     * @param  {[type]} parent [supClass that be extended]
+     * @return {[type]}        [extended subClass]
      */
     function __extend(child, parent) {
-        var __hasProp = {}.hasOwnProperty;
+        var __hasProp = {}.hasOwnProperty
         for (var key in parent) {
             if (__hasProp.call(parent, key)) child[key] = parent[key];
         }
-        function Ctor() {
+        function ctor() {
             this.constructor = child;
         }
-        Ctor.prototype = parent.prototype;
-        child.prototype = new Ctor();
+        ctor.prototype = parent.prototype;
+        child.prototype = new ctor();
         child.__super__ = parent.prototype;
         return child;
-    }
+    };
 
     function UTCDate(){
         return new Date(Date.UTC.apply(Date, arguments));
@@ -91,7 +89,9 @@
      * @api private
      */
     function isLeapYear(year) {
-      return (0 == year % 400) || ((0 == year % 4) && (0 != year % 100)) || (0 == year);
+      return (0 == year % 400)
+        || ((0 == year % 4) && (0 != year % 100))
+        || (0 == year);
     }
 
     /**
@@ -126,10 +126,7 @@
         },
         WEEK = {0: ['周日', '一', '二', '三', '四', '五', '六'],
                 1: ['周一', '二', '三', '四', '五', '六', '日']
-            },
-        /*WEEK = {0: ['Sun', 'Mon', 'Thu', 'Wen', 'Tus', 'Fri', 'Sat'],
-                1: ['Mon', 'Thu', 'Wen', 'Tus', 'Fri', 'Sat', 'Sun']
-            },*/
+            }
         HOLIDAYS = {};
 
     var _uid = +new Date();
@@ -179,12 +176,12 @@
         crossMonth: 12,
         Holidays: window.HolidayData,
         passed: false,
-        showRelate: false,
         popbox: true, //绝对定位的弹框还是inline，true为弹框
         direction: 'b', //top-t,bottom-b,left-l,right-r
         beforeShow: '', //hook before show
         afterHide: '', //hook after hide
         range: false, //if range datepicker or single datepicker
+        calender: 1, //number of calenders
         animate: 'none', //animation
         distance: '3D' //default todate after fromdate D,W,Y respect day,week
     };
@@ -224,7 +221,7 @@
                 left: $inp.offset().left,
                 width: parseInt($inp.css('width'), 10),
                 height: parseInt($inp.css('height'), 10)
-            };
+            }
 
             //poplayer position
             var top, left, direct;
@@ -300,19 +297,18 @@
 
 
             weekCont.push('</tr></thead></table>');
-            weekCont = weekCont.join('');
+            weekCont = weekCont.join("");
 
             var dayCont = ['<table class="date-table">',
                                 '<tbody class="tbody">'];
 
             var weekStart = parseInt((info.firstDay - options.weekStart) % 7, 10);
             weekStart < 0 ? weekStart = 6 : '';
-            var mEnd = weekStart + info.daysCont;
+            var w_end = weekStart + info.daysCont;
             var year = info.year,
                 month = info.month,
-                mShow = info.mShow,
-                prevMonLastDay = info.prevMonLastDay, //上一个月的最后一天
-                day,
+                m_show = info.m_show,
+                date,
                 extLang,
                 dateStrFull,
                 dateStrInp;
@@ -322,31 +318,24 @@
                     dayCont.push('<tr>');
                 }
 
-                if(cont < weekStart){
-                    //是否展示上一个月的信息
-                    var prevDay = (options.showRelate ? (prevMonLastDay - weekStart + cont + 1) : '&nbsp');
-                    dayCont.push('<td class="old">'+ prevDay +'</td>');
-
-                } else if(cont >= weekStart && cont < mEnd){
+                if(cont >= weekStart && cont < w_end){
 
                     var cur = '',
                         today = '',
                         mstr = month + 1,
                         d;
-                    day = cont + 1 - weekStart;
+                    date = cont + 1 - weekStart;
 
-                    dateStrInp = year + '-' + mShow + '-' + day;
+                    dateStrInp = year + '-' + m_show + '-' + date;
 
-                    dateStrFull = year + '-' + self.formatDateCell(mShow) + '-' + self.formatDateCell(day);
-                    d = UTCDate(year, month, day);
+                    dateStrFull = year + '-' + self.formatDateCell(m_show) + '-' + self.formatDateCell(date);
+                    d = UTCDate(year, month, date);
 
                     extLang = self.parseExtLang(d, dateStrFull, cont);
 
-                    dayCont.push('<td class="'+ extLang.cls +'" data-date-str="'+ dateStrInp +'">'+ (extLang.txt.length ? extLang.txt : day) +'</td>');
-
+                    dayCont.push('<td class="'+ extLang.cls +'" data-date-str="'+ dateStrInp +'">'+ (extLang.txt.length ? extLang.txt : date) +'</td>');
                 } else {
-                    var nextDay = options.showRelate ? (cont - mEnd + 1) : '&nbsp;';
-                    dayCont.push('<td class="old">'+ nextDay +'</td>');
+                    dayCont.push('<td class="old">&nbsp;</td>');
                 }
 
                 if(cont % 7 === 6){
@@ -418,26 +407,20 @@
             var startY = Math.max(isDate(minD) ? minD.getFullYear() : minD, year - opts.crossYear),
                 startM = 1,
                 endY = Math.min(isDate(maxD) ? maxD.getFullYear() : maxD, year + opts.crossYear),
-                endM = 12,
-                selected,
-                navInfo;
+                endM = 12;
 
             for(var y = startY; y <= endY; y++){
-
+                var selected = '';
                 if(year === y){
-                    selected = 'selected';
-                } else {
-                    selected = '';
+                    var selected = 'selected';
                 }
                 yearCont.push('<option ' + selected + '>' + y +' </option>');
             }
 
             for(var m = startM; m <= endM; m++){
-
+                selected = '';
                 if(month+1 === m){
-                    selected = 'selected';
-                } else {
-                    selected = '';
+                    var selected = 'selected';
                 }
                 monthCont.push('<option '+ selected +'>'+ m +'</option>');
             }
@@ -470,7 +453,7 @@
                 options = this.options,
                 day = date.getDay();
 
-            if(this.chosenDate - date === 0 ){
+            if(this.chosenDate - date == 0 ){
                 cls += ' cur';
             }
 
@@ -525,7 +508,7 @@
 
                 default:
                     break;
-            };
+            }
 
             return {
                 cls: cls,
@@ -586,7 +569,7 @@
                     date: UTCDate(nextYear, nextMonth, 1),
                     dis: nextDis
                 }
-            };
+            }
 
             this.curInfo.navInfo = navInfo;
 
@@ -594,10 +577,10 @@
 
         },
 
-        getDateInfo: function(source){
+        getDateInfo: function(date){
             var info = {};
             var formatDateCell = this.formatDateCell;
-            var date = new Date(source.getTime()); //clone date
+            var date = new Date(date.getTime()); //clone date
 
             var y = date.getFullYear(),
                 m = date.getMonth(),
@@ -611,26 +594,23 @@
                 hh = formatDateCell(h),
                 mimi = formatDateCell(mi),
                 ss = formatDateCell(s),
-                mShow = m + 1;
+                m_show = m + 1;
 
             var daysCont = daysInMonth(m, y);
 
-            var firstDay = new Date(date.setDate(1)).getDay(); //第一天的星期
-            var prevMonLastDay = new Date(new Date(date.setDate(1)).getTime() - ONEDAY).getDate();
-
+            var firstDay = new Date(date.setDate(1)).getDay();
             info = {
                 date: date,
                 year: y,
                 month: m,
                 dd: dd,
                 hh: hh,
-                mimi: mimi, //format minutes
+                mimi: mimi,
                 ss: ss,
                 daysCont: daysCont,
                 firstDay: firstDay,
                 day: d,
-                mShow: mShow,
-                prevMonLastDay: prevMonLastDay
+                m_show: m_show
                 //dateStr: this.formateDate(date)
             };
             this.curInfo = info;
@@ -702,7 +682,7 @@
             $holder.on('mousedown.yod', '.date-today', function(evt){
                 evt.preventDefault();
                 self.update( UTCToday() );
-            });
+            })
 
             isIE(7, 'lt') && $holder.on('mouseover.yod', 'td.day', function(evt){
                 $(this).addClass('hover');
@@ -878,10 +858,10 @@
 
     window.YoDateRange = function(from, to, options){
         var self = this,
-            fromOpts = $.extend(options, {range: true, relateTo: to}),
-            toOpts = $.extend(options, {range:true, relateFrom: from});
-        new YoDate(from, fromOpts);
-        new YoDate(to, toOpts);
+            from_opts = $.extend(options, {range: true, relateTo: to}),
+            to_opts = $.extend(options, {range:true, relateFrom: from});
+        new YoDate(from, from_opts);
+        new YoDate(to, to_opts);
     };
 
 })(window, undefined, jQuery);
