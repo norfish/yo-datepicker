@@ -2,16 +2,7 @@
  * @name yo-datepicker
  * @description a date picker
  * @author yongxiang.li
- * @date 2014/7/10 15:37
- */
-
-/**
- * need todo
- *
- */
-
-/**
- * some userfull function
+ * @date 2014/6/10 15:37
  */
 
 /**
@@ -179,7 +170,7 @@
         crossMonth: 12,
         Holidays: window.HolidayData,
         passed: false,
-        showRelate: false,
+        showRelate: false, //是否展示前后月份的日期
         popbox: true, //绝对定位的弹框还是inline，true为弹框
         direction: 'b', //top-t,bottom-b,left-l,right-r
         beforeShow: '', //hook before show
