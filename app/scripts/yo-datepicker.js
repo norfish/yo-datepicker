@@ -153,8 +153,7 @@
                         '</div>'+
                         '<div class="date-ft"><div class="date-map"><a href="javascript:void(0);" class="date-today">今天</a></div></div>'+
                         '<div class="arrow">'+
-		                    '<div class="arrow-inner">&diams;</div>'+
-		                    '<div class="arrow-outer">&diams;</div>'+
+		                    '<div class="arrow-inner"></div>'+
 		                '</div>'+
                     '</div>';
 

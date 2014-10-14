@@ -7,7 +7,7 @@
             passed: true,
             minDate: new Date(Date.UTC(2010, 7, 15) ),
             maxDate: new Date(Date.UTC(2016, 2, 9)),
-            distance: '1W'
+            distance: '3D'
 
         };
 

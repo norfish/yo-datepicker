@@ -60,28 +60,29 @@ a{text-decoration: none;}
     font-family: tahoma, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
-/*.yo-date .arrow{
+.yo-date .arrow{
     content: ' ';
     height: 0;
     position: absolute;
     width: 0;
 
     border: 7px solid transparent;
+    _border: 7px solid #FFF;
 }
 
 .dir-default .arrow{
     border-bottom-color: #72C8FA;
     top: -14px;
-    _top: -28px;
     left: 10px;
 }
 
 .dir-right .arrow{
     border-right-color: #72C8FA;
-    top: 10px;
+    top: 7px;
     left: -14px;
-}*/
+}
 
+/*
 .yo-date .arrow{
     position: absolute;
     width: 12px;
@@ -106,6 +107,7 @@ a{text-decoration: none;}
 .dir-defaul .arrow{}
 
 .dir-right .arrow{ top: 5px; left: -5px;}
+*/
 
 .yo-date .date-hd .switch,
 .yo-date .date-hd .date-guide,
