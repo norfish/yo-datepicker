@@ -169,7 +169,7 @@
         crossYear: 10,
         crossMonth: 12,
         Holidays: window.HolidayData,
-        selector: true, //日期是否支持select 选择
+        noSelector: false, //日期是否支持select 选择
         passed: false,
         showRelate: false, //是否展示前后月份的日期
         popbox: true, //绝对定位的弹框还是inline，true为弹框
@@ -354,7 +354,8 @@
 
             self.picker = $picker.get(0);
 
-            self.updateNav(info);
+            //render nav with or without selector
+            options.noSelector ? self.updatePureNav(info) : self.updateNav(info);
 
             self.$holder.html($picker);
 
@@ -452,6 +453,36 @@
             self.picker = $picker[0];
 
             return self;
+
+        },
+
+        updatePureNav: function(info){
+
+            var self = this,
+                $picker = $(self.picker),
+                year = info.year,
+                month = info.month,
+                opts = this.options,
+                minD = opts.minDate,
+                maxD = opts.maxDate,
+                navInfo,
+                dateNum;
+
+            dateNum = '<h3>' + year + '年' + month + '月' + '</h3>';
+
+            $picker.find('.ym').html(dateNum);
+
+            navInfo = self.calcuNav();
+
+            //check if the nav  display or not
+            navInfo.prev.dis ? $picker.find('.prev').css('visibility', 'hidden') : $picker.find('.prev').css('visibility', 'visible');
+            navInfo.next.dis ? $picker.find('.next').css('visibility', 'hidden') : $picker.find('.next').css('visibility', 'visible');
+
+            self.picker = $picker[0];
+
+            return self;
+
+
 
         },
 

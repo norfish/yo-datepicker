@@ -30,6 +30,14 @@
         //passed true minDate maxDate
         $('#date3').yoDate(options);
 
+        //nav no Selector just number
+        $('#date4').yoDate({
+            passed: false,
+            showRelate: true,
+            noSelector: true,
+            minDate: new Date(Date.UTC(1980, 7, 15) )
+        });
+
         var fromDate = $('input[name=fromDate]'),
             toDate = $('input[name=toDate]');
 

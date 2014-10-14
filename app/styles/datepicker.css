@@ -175,6 +175,18 @@ a{text-decoration: none;}
     color: #FFF;
 }
 
+/**
+ * 无selecter时候的日期格式
+ */
+.yo-date .ym h3{
+    margin: 0 auto;
+    text-align: center;
+    line-height: 29px;
+    font-size: 15px;
+    color: #606060;
+    font-weight: bold;
+}
+
 .yo-date .ym-wrap{
     position: absolute;
     height: 2px;
