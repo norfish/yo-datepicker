@@ -37,8 +37,6 @@
         //range Datepicker from and to
         YoDateRange(fromDate, toDate, options);
 
-
-
     });
 
 })(jQuery);

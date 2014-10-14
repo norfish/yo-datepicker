@@ -87,6 +87,7 @@ a{text-decoration: none;}
     width: 12px;
     height: 12px;
     top: -10px;
+    top: -8px\0;
     left: 10px;
     font-size: 23px;
     line-height: 16px;
@@ -132,7 +133,7 @@ a{text-decoration: none;}
 .yo-date .date-guide .prev,
 .yo-date .date-guide .next{
     width: 20px;
-    height: 100%;
+    height: 30px;
     line-height: 30px;
     color: #FFF;
 }
@@ -151,22 +152,27 @@ a{text-decoration: none;}
 }
 
 .yo-date .date-guide .prev{
-    float: left;
     text-align: left;
+    position: absolute;
+    top: 0;
+    left: 0;
+
 }
 
 .yo-date .date-guide .next{
-    float: right;
     text-align: right;
+    position: absolute;
+    top: 0;
+    right: 0;
 }
 
 .yo-date .date-guide .ym {
-    float: left;
+    position: absolute;
     width: 170px;
-    height: 100%;
+    height: 30px;
+    left: 20px;
     margin: 0 10px;
     color: #FFF;
-    position: relative;
 }
 
 .yo-date .ym-wrap{
@@ -315,5 +321,4 @@ a{text-decoration: none;}
 
 .yo-date .date-map a:hover{
     color: #08D1C4;
-    border-bottom: solid 1px #08D1C4;
 }

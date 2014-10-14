@@ -169,6 +169,7 @@
         crossYear: 10,
         crossMonth: 12,
         Holidays: window.HolidayData,
+        selector: true, //日期是否支持select 选择
         passed: false,
         showRelate: false, //是否展示前后月份的日期
         popbox: true, //绝对定位的弹框还是inline，true为弹框
@@ -186,7 +187,7 @@
     var YoDate = function(inp, options){
         var ot = new Date().getTime();
         this.inp = inp;
-        _uid = +new Date();
+        this._uid = +new Date();
         this.options = $.extend({}, Default, options);
         this.$holder = '';
         this.curInfo = {};
@@ -237,7 +238,7 @@
 
                 case 'b':
                 default: {
-                    top = pos.top + pos.height + 10;
+                    top = pos.top + pos.height + 20;
                     left = pos.left;
                     direct = 'dir-default'; //default
                     break;
@@ -638,23 +639,21 @@
                 self.show();
             });
 
+            //for ie only
+
+            $inp.on('beforedeactivate', function(evt){
+                mousedown && evt.preventDefault();
+                mousedown = 0;
+            });
+
             $inp.on('blur.yod', function(){
                 self.hide();
             });
 
-            //for ie only
-            $inp.on('beforedeactivate', function(evt){
-                mousedown && evt.preventDefault();
-            });
-
-            //keep the input focus status
-            $holder.on('mousedown.yod', function(evt){
+            $holder.on('mousedown.yod', '.nav', function(evt){
                 evt.preventDefault();
                 mousedown = 1;
-            });
 
-            $holder.on('mousedown.yod', '.nav', function(evt){
-                evt.stopPropagation();
                 var navInfo = self.curInfo.navInfo;
                 if($(this).hasClass('prev')){
                     !navInfo.prev.dis && self.update(navInfo.prev.date);
@@ -662,6 +661,13 @@
                     !navInfo.next.dis && self.update(navInfo.next.date);
                 }
                 return false;
+
+            });
+
+            //keep the input focus status
+            $holder.on('mousedown.yod', function(evt){
+                evt.preventDefault();
+                mousedown = 1;
             });
 
             /*$holder.on('change.yod', '.ym-nav', function(evt){
@@ -674,7 +680,9 @@
             });*/
 
             $holder.on('mousedown.yod', 'td.day', function(evt){
-                evt.stopPropagation();
+                evt.preventDefault();
+                mousedown = 1;
+                //evt.stopPropagation();
                 var $tar = $(this),
                     str = $(this).data('date-str');
 
@@ -692,6 +700,7 @@
             //
             $holder.on('mousedown.yod', '.date-today', function(evt){
                 evt.preventDefault();
+                mousedown = 1;
                 self.update( UTCToday() );
             });
 
@@ -779,7 +788,7 @@
 
         getUID: function(pre){
             pre ? pre = pre + '_' : pre = '';
-            return pre + 'YODATE' + _uid;
+            return pre + 'YODATE' + this._uid;
         },
 
         /*******Events*******/
