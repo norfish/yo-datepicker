@@ -7,7 +7,7 @@
             passed: true,
             minDate: new Date(Date.UTC(2010, 7, 15) ),
             maxDate: new Date(Date.UTC(2016, 2, 9)),
-            distance: '3D'
+            distance: '15D'
 
         };
 
@@ -40,7 +40,6 @@
 
         var fromDate = $('input[name=fromDate]'),
             toDate = $('input[name=toDate]');
-
 
         //range Datepicker from and to
         YoDateRange(fromDate, toDate, options);

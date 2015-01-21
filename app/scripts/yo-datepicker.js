@@ -33,26 +33,6 @@
         console.log = console.info = console.debug = console.error = function(){};
     }
 
-    /**
-     * [__extend description] extend class
-     * @param  {[object]} child  [subClass]
-     * @param  {[object]} parent [supClass that be extended]
-     * @return {[object]}        [extended subClass]
-     */
-    function __extend(child, parent) {
-        var __hasProp = {}.hasOwnProperty;
-        for (var key in parent) {
-            if (__hasProp.call(parent, key)) child[key] = parent[key];
-        }
-        function Ctor() {
-            this.constructor = child;
-        }
-        Ctor.prototype = parent.prototype;
-        child.prototype = new Ctor();
-        child.__super__ = parent.prototype;
-        return child;
-    }
-
     function UTCDate(){
         return new Date(Date.UTC.apply(Date, arguments));
     }
@@ -167,9 +147,9 @@
         maxDate: Infinity,
         crossYear: 10,
         crossMonth: 12,
-        Holidays: window.HolidayData,
+        Holidays: window.HolidayData, //节假日
         noSelector: false, //日期是否支持select 选择
-        passed: false,
+        passed: false, //过期的日期是否展示
         showRelate: false, //是否展示前后月份的日期
         popbox: true, //绝对定位的弹框还是inline，true为弹框
         direction: 'b', //top-t,bottom-b,left-l,right-r
@@ -186,23 +166,22 @@
     var YoDate = function(inp, options){
         var ot = new Date().getTime();
         this.inp = inp;
-        this._uid = +new Date();
+        this._uid = ++_uid;
         this.options = $.extend({}, Default, options);
         this.$holder = '';
         this.curInfo = {};
         this.chosenDate = UTCToday();
         this.picker = TP_DATEPICKER;
-        this.init();
+
+        //
+        this.initHolder();
+        this.processOpts();
+        this.render();
+        this.onAfterRender();
         console.log('init-cost', new Date().getTime() - ot + 'ms');
     };
 
     YoDate.prototype = {
-        init: function(){
-            this.initHolder();
-            this.processOpts();
-            this.render();
-            this.onAfterRender();
-        },
 
         initHolder: function(){
             var self = this;
@@ -434,6 +413,7 @@
                 monthCont.push('<option '+ selected +'>'+ m +'</option>');
             }
 
+
             yearCont.push('</select><span class="ym-measure">年</span>');
             monthCont.push('</select><span class="ym-measure">月</span>');
 
@@ -461,13 +441,14 @@
                 $picker = $(self.picker),
                 year = info.year,
                 month = info.month,
+                mouthShow = month + 1,
                 opts = this.options,
                 minD = opts.minDate,
                 maxD = opts.maxDate,
                 navInfo,
                 dateNum;
 
-            dateNum = '<h3>' + year + '年' + month + '月' + '</h3>';
+            dateNum = '<h3>' + year + '年' + mouthShow + '月' + '</h3>';
 
             $picker.find('.ym').html(dateNum);
 
@@ -566,27 +547,29 @@
                 maxD = opts.maxDate,
                 prevYear,
                 prevMonth,
+                prevMonthShow,
                 nextYear,
                 nextMonth,
+                nextMonthShow,
                 navInfo,
                 nav = {};
 
             //prev
-            if(m - 1 > 0){
-                prevMonth = m - 1;
-                prevYear = y;
-            } else {
+            if(m - 1 < 0){
                 prevMonth = 11;
                 prevYear = y - 1;
+            } else {
+                prevMonth = m - 1;
+                prevYear = y;
             }
 
             //next
-            if( m + 1 < 11){
-                nextMonth = m + 1;
-                nextYear = y;
-            } else {
+            if(m + 1 > 11){
                 nextMonth = 0;
                 nextYear = y + 1;
+            } else {
+                nextMonth = m + 1;
+                nextYear = y;
             }
 
             if(UTCDate(prevYear, prevMonth) - ( isDate(minD) ? UTCDate(minD.getFullYear(), minD.getMonth()) : minD ) < 0 ){
@@ -597,14 +580,17 @@
                 nextDis = true;
             }
 
+            prevMonthShow = this.formatDateCell( prevMonth + 1 );
+            nextMonthShow = this.formatDateCell( nextMonth + 1 );
+
             navInfo = {
                 prev: {
-                    dateStr: prevYear + '-' + prevMonth + '-' + '01',
+                    dateStr: prevYear + '-' + prevMonthShow + '-' + '01',
                     date: UTCDate(prevYear, prevMonth, 1),
                     dis: prevDis
                 },
                 next: {
-                    dateStr: nextYear + '-' + nextMonth + '-' + '01',
+                    dateStr: nextYear + '-' + nextMonthShow + '-' + '01',
                     date: UTCDate(nextYear, nextMonth, 1),
                     dis: nextDis
                 }
