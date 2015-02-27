@@ -336,4 +336,5 @@ a{text-decoration: none;}
 
 .yo-date .date-map a:hover{
     color: #08D1C4;
+    text-decoration: none;
 }

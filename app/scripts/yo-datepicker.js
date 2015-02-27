@@ -22,7 +22,7 @@
  * seprator - or /
  */
 
-(function(window, undefined, $){
+!function(window, undefined, $){
 
     "use strict";
 
@@ -33,12 +33,17 @@
         console.log = console.info = console.debug = console.error = function(){};
     }
 
+    /**
+     * [UTCDate getUTC date]
+     */
     function UTCDate(){
         return new Date(Date.UTC.apply(Date, arguments));
     }
 
+
     function UTCToday(){
-        var t = new Date();
+
+        var t = /*QNR && QNR.SERVER_TIME ||*/ new Date();
         return UTCDate( t.getFullYear(), t.getMonth(), t.getDate() );
     }
 
@@ -155,6 +160,7 @@
         direction: 'b', //top-t,bottom-b,left-l,right-r
         beforeShow: '', //hook before show
         afterHide: '', //hook after hide
+        type: 'single', //singedatepicker or rangeFrom rangeTo
         range: false, //if range datepicker or single datepicker
         animate: 'none', //animation
         distance: '3D' //default todate after fromdate D,W,Y respect day,week
@@ -164,6 +170,7 @@
 
 
     var YoDate = function(inp, options){
+
         var ot = new Date().getTime();
         this.inp = inp;
         this._uid = ++_uid;
@@ -240,7 +247,7 @@
                 if(opts.relateFrom){
                     var str = $(opts.relateFrom).val(),
                     d = this.getDate(str);
-                    d ? opts.minDate = d : null;
+                    d ? this.minToDate = d : null;
                 }
             }
         },
@@ -255,6 +262,7 @@
             if(!date){
                 date = UTCToday();
             }
+
             info = self.getDateInfo(date);
 
             var options = self.options;
@@ -336,14 +344,6 @@
             options.noSelector ? self.updatePureNav(info) : self.updateNav(info);
 
             self.$holder.html($picker);
-
-            //console.log('bind');
-            /*$picker.find('.year-cont select').selecter();
-            $picker.find('.month-cont select').selecter();*/
-
-            /*$picker.find('.year-cont select').fancySelect();
-            $picker.find('.month-cont select').fancySelect();*/
-
 
         },
 
@@ -462,10 +462,15 @@
 
             return self;
 
-
-
         },
 
+        /**
+         * [parseExtLang 计算一个日期的扩展属性，比如节假日，周末等等信息]
+         * @param  {[date]} date [description]
+         * @param  {[string]} key  [holiday key]
+         * @param  {[number]} cont [which]
+         * @return {[object]}      [class]
+         */
         parseExtLang: function(date, key, cont){
             var cls = '',
                 txt = '',
@@ -507,8 +512,12 @@
                 }
             }
 
+            //判断日期是否符合过期条件
             if( (options.passed && date - UTCToday() < 0) ||
                     (options.minDate - date > 0 || options.maxDate - date < 0) ){
+                cls += ' gray';
+            //如果是daterange则判断联动
+            } else if( (options.type === 'rangeTo') && (this.minToDate - date > 0) ) {
                 cls += ' gray';
             } else {
                 cls += ' day';
@@ -536,6 +545,7 @@
             }
         },
 
+        //计算nav
         calcuNav: function(){
             var info = this.curInfo,
                 y = info.year,
@@ -602,6 +612,11 @@
 
         },
 
+        /**
+         * [getDateInfo 计算一个给定日期的相关信息]
+         * @param  {[date]} source []
+         * @return {[object]}        [infomation]
+         */
         getDateInfo: function(source){
             var info = {};
             var formatDateCell = this.formatDateCell;
@@ -612,14 +627,14 @@
                 d = date.getDate(),
                 w = date.getDay(),
                 h = date.getHours(),
-                mi = date.getMinutes(),
+                mi = date.getMinutes(), //月份 0-11
                 s = date.getSeconds(),
                 mm = formatDateCell(m),
                 dd = formatDateCell(d),
                 hh = formatDateCell(h),
                 mimi = formatDateCell(mi),
                 ss = formatDateCell(s),
-                mShow = m + 1;
+                mShow = m + 1; //展示的月份1-12
 
             var daysCont = daysInMonth(m, y);
 
@@ -740,6 +755,7 @@
 
         	str && $inp.val(str);
 
+            //如果是往返日期则联动
         	if(opts.range){
 
         		var dis = opts.distance.match(/^(\d+)(\w)$/);
@@ -756,6 +772,7 @@
         		}
         	}
         },
+
 
         formatDateCell: function(str){
             return ((''+str).length === 1) ? '0' + str : str;
@@ -782,14 +799,30 @@
             }
         },
 
+        /**
+         * [isDateStr 判断字符串是否是正确的日期格式]
+         * @param  {[string]}  str [date-str such as 2014-12-12 2014/1/13]
+         * @return {Boolean}
+         */
         isDateStr: function(str){
             return /^\d{4}[\-]\d{1,2}[\-]\d{1,2}$/.test(str);
         },
 
+        /**
+         * [multiStr 复制一个字符串n次，返回长字符串]
+         * @param  {[string]} str   [description]
+         * @param  {[number]} times [description]
+         * @return {[string]}       [description]
+         */
         multiStr: function(str, times){
             return new Array(times+1).join(str);
         },
 
+        /**
+         * [formateDate description]
+         * @param  {[date]} date
+         * @return {[string]}      [description]
+         */
         formateDate: function(date){
             var formatDateCell = this.formatDateCell;
             return date.getFullYear() + '-' + formatDateCell(date.getMonth() + 1) + '-' + formatDateCell(date.getDate());
@@ -799,8 +832,6 @@
             var formatDateCell = this.formatDateCell();
             return date.getFullYear + '-' + formatDateCell(date.getMonth) + '-' + formatDateCell(date.getDate);
         },
-
-        DateStrFix: function(){},
 
         getUID: function(pre){
             pre ? pre = pre + '_' : pre = '';
@@ -888,16 +919,23 @@
      * extend jquery
      */
     $.fn.yoDate = function(options){
-        var self = this;
-        new YoDate($(self), options);
+        new YoDate(this, options);
     };
 
+    /**
+     * [YoDateRange range datepicker]
+     * @param {[dom]} from    [from date dom]
+     * @param {[dom]} to      [to date dom]
+     * @param {[object]} options [options]
+     */
     window.YoDateRange = function(from, to, options){
         var self = this,
-            fromOpts = $.extend(options, {range: true, relateTo: to}),
-            toOpts = $.extend(options, {range:true, relateFrom: from});
-        new YoDate(from, fromOpts);
+            fromOpts = $.extend({}, options, {range: true, relateTo: to, type: 'rangeFrom'}),
+            toOpts = $.extend({}, options, {range:true, relateFrom: from, type: 'rangeTo'});
+
+        var a = new YoDate(from, fromOpts);
+        console.log('init', a, a.options)
         new YoDate(to, toOpts);
     };
 
-})(window, undefined, jQuery);
+}(window, undefined, jQuery);
